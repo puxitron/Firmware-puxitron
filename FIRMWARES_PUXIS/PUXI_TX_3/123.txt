@@ -1,0 +1,27 @@
+////////////////////////////////////////////////////////////
+void COPIA_BUFFER(int P,int W)                       // FUNCION QUE LIMPIA TODO EL STRING QUE GUARDA LAS VARIABLES DE RX
+{
+
+  COPY=1;                                 
+    
+     X=0;
+      Z=-1;
+      
+      for (int i=0; i<99;i++)
+        {BUFFER_USART2[i]=NULL;}                  //CADA POSICION DEL STRING LE PONE CARACTER NULL 00
+          I=P+2; 
+            D=W+4;
+
+}
+
+
+
+
+void LIMPIA_BUFFER()                          // FUNCION QUE LIMPIA TODO EL STRING QUE GUARDA LAS VARIABLES DE RX
+{
+  COPY=0;
+    X=0;
+      Z=0;
+        I=0;
+          D=0;
+        }

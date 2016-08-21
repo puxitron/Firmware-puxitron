@@ -1,0 +1,8 @@
+POST /vtechinfos/ HTTP/1.1               26        
+Content-Type: application/json           30
+Host: vtechph.herokuapp.com              27
+Connection: keep-alive                   22
+Content-Length:159                       18
+
+
+[{"imei":"012813005352598","ip":"192.168.1.1","kpi":"ph","kpivalue":10.00,"batterystate":4.196,"kpiunitmeasure":"ph","nmea":"$GPGGA,055714.3,,,,,0,,,,,,,,*"}]
