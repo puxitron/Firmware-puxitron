@@ -102,7 +102,7 @@ void setup() {
                                                                              for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //
                                                                                               
                                                                                                                                     
-                                                                                                                      if(EEPROM.read(x) == 0){
+                                                                                                                      if(EEPROM.read(x) != 0){
                                                                                                                           ADRR_EEPROM_OCUPADO--; 
                                                                                                                                                                      
                                                                                                                                                                                                               }
