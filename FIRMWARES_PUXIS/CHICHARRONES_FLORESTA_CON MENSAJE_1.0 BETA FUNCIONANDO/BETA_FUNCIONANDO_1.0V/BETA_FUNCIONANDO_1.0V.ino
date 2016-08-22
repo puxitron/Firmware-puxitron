@@ -19,6 +19,7 @@ char   CELULAR_ADMIN[25];
 char   CELULAR_ALTA[25];
 char   LLAMADA_RING[11];
 char   EEPROM_BUFFER[11];
+char   NUMERO_A_BORRAR[11];
 
 
   
@@ -193,8 +194,26 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                         BODY[i - 47] = BUFFER_USART2[i];
                                                                   }
 
+                                                            ///////////////////////////////////////////////////////////////
+                                                            if (strcasestr(BODY, "Borrar@:")) {         ///////////////////////////////BORRA UN NUMERO ESPECIFICO DE LA EEPROM
+                                                                  
+                                                               for (int i = 9; i < 21; i++) {
 
-
+                                                                      if (BODY[i] == 0x0D) {
+                                                                                    BODY[i]= 0x00;   
+                                                                                                      }
+                                                                             NUMERO_A_BORRAR[i - 9] = BODY[i];
+                                                                                                    
+                                                                                                       }//FOR 
+                                                                  BUSCAR_NUMERO_BORRAR();
+                                                                          
+                                                                          
+                                                                          for (int i = 0; i < 26; i++) {
+                                                                                   BODY[i] = NULL;
+                                                                                                                  }//FOR LIMPIA BODY BUFFER
+                                                                                                                      }
+ 
+                                                            /////////////////////////////////////////////////////////////////////////////////////////////////
                                                             if (strcasestr(BODY, "limpiar memoria")) {     ///////////////////////////////LIMPIA LA EEPROM
                                                                      LIMPIA_EEPROM();
                                                                             for (int i = 0; i < 26; i++) {
@@ -202,6 +221,7 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                                                                                                   }//FOR LIMPIA BODY BUFFER
                                                                                                                       }
 
+                                                            ///////////////////////////////////////////////////////////////////////////////////////////////////
                                                             if (strcasestr(BODY, "Admin@:")) {          //////////////////////////////////ALTA DEL ADMIN
                                                                                     
                                                                   for (int i = 8; i < 21; i++) {
@@ -224,17 +244,19 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                                                                                                                                                   
                                                                                                                                        }//for2  
                                                                                                                 
-                                                                        y=0;
-                                                                        ALTA_ADMIN();                                       
+                                                                 y=0;
+                                                                 ALTA_ADMIN();  
+                                                                         
+                                                                          
+                                                                                                        for (int i = 0; i < 26; i++) {
+                                                                                                                  BODY[i] = NULL;
+                                                                                                                                            }//FOR LIMPIA BODY BUFFER
+                                                                                                                       
+                                                                                                     
                                                                                                                 
                                                                                                                 }//IF ADMIN
                                                             
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            if (strcasestr(BODY, "Alta@:")) {              ////////////////////////////////MECANISMO DE ALTA DE CUALQUIER NUMERO INCLUYE VALIDACION 10DIGITOS(ONLY NUMBERS)
+                                                            if (strcasestr(BODY, "Alta@:")) {      ////////////////////////////////MECANISMO DE ALTA DE CUALQUIER NUMERO INCLUYE VALIDACION 10DIGITOS(ONLY NUMBERS)
 
 
 
@@ -596,7 +618,7 @@ int x;
   
   
   SIM800.print(EEPROM_BUFFER);           //SMS body
-  delay(50);
+  
   SIM800.write(0x1A);           // sends ctrl+z end of message
   delay(4000);
 }
@@ -612,9 +634,9 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                   }//for
                                         
                                         
-                                                                                                                                   if (strcasestr(EEPROM_BUFFER,LLAMADA_RING)) {
-                                                                                                                                      //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
- 
+                                                                                                                                   if (strcasestr(EEPROM_BUFFER,NUMERO_A_BORRAR)) {
+                                                                                                                                      SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
+                                                                                                                                        delay(50);
                                                                                                                                                           
                                                                                                                                                            
                                                                                                                                                         
