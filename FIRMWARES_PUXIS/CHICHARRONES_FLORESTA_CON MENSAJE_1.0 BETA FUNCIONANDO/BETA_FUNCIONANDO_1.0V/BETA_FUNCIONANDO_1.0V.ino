@@ -89,8 +89,8 @@ void setup() {
   delay(2000);
 
 
-  SIM800.println("AT+CLIP=1");          //MUESTRA EL MENSAJE COMPLETO TXT
-  delay(2000);
+  //SIM800.println("AT+CLIP=1");          //MUESTRA EL MENSAJE COMPLETO TXT
+  //delay(2000);
 
     //SIM800.println("AT+CHLD=?");          //MUESTRA EL MENSAJE COMPLETO TXT
   //delay(2000);
@@ -99,7 +99,7 @@ void setup() {
   //SIM800.println("AT+CCWA=1,1");          //MUESTRA EL MENSAJE COMPLETO TXT
   //delay(2000);
 
-                                                                             for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //
+                                                                             for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //SI EL SISTEMA SE APAGA EL FOR DETERMINA EL VALOR DE CUANTAS POSICIONES DE LA EEPROM ESTAN OCUPADAS (INDEX)
                                                                                               
                                                                                                                                     
                                                                                                                       if(EEPROM.read(x) != 0){
@@ -459,9 +459,9 @@ void ALTA_CORRECTA()
   //SIM900.write("AT+CMGF=1\r");           //set GSM to text mode
   //delay(1000);
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
   SIM800.print(CELULAR);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alta correcta numero:");           //SMS body
@@ -481,9 +481,9 @@ void ALTA_INCORRECTA()
   //SIM900.write("AT+CMGF=1\r");           //set GSM to text mode
   //delay(1000);
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
   SIM800.print(CELULAR);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Numero invalido");           //SMS body
@@ -500,9 +500,9 @@ void LIMPIA_EEPROM()
                                                               }
 
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
   SIM800.print(CELULAR);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Limpieza correcta");           //SMS body
@@ -515,9 +515,9 @@ void SIN_MEMORIA()
 {
    
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
   SIM800.print(CELULAR);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("No hay suficiente espacio de almacenamiento");           //SMS body
@@ -530,7 +530,7 @@ void ALARMA_ACTIVADA()
 {
  int z;  
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
                                        z=0;                           //POSICION DEL ADMIN LA 0
                                          for(int k=0;k<10;k++){ 
                                           EEPROM_BUFFER[k]=EEPROM.read(z);
@@ -540,7 +540,7 @@ void ALARMA_ACTIVADA()
   
   
   SIM800.print(EEPROM_BUFFER);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alarma activada por el numero:");           //SMS body
@@ -555,7 +555,7 @@ void ALARMA_DESACTIVADA()
 {
  int z;  
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
                                        z=0;                           //POSICION DEL ADMIN LA 0
                                          for(int k=0;k<10;k++){ 
                                           EEPROM_BUFFER[k]=EEPROM.read(z);
@@ -565,7 +565,7 @@ void ALARMA_DESACTIVADA()
   
   
   SIM800.print(EEPROM_BUFFER);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alarma desactivada por el numero:");           //SMS body
@@ -580,9 +580,9 @@ void ALTA_ADMIN()
 {
 int x;   
   SIM800.print("AT+CMGS=\"+52");   //
-  delay(10);
+  delay(100);
   SIM800.print(CELULAR_ADMIN);   //  "\"\r"
-  delay(10);
+  delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Admin activado:\r");           //SMS body
