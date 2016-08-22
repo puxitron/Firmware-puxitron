@@ -54,9 +54,9 @@ void setup() {
   UBRR0H  = 0x00;                                   //VALOR QUE SE LE CARGA AL REGISTRO HIGH 0
   UBRR0L  = 0x67;                                   //VALOR QUE SE LE CARGA AL REGISTRO LOW 0x67 QUE ES IGUAL A 103 PARA 9600 08 PARA 115200
   //////////////////////////////////////////////////////////////////////////////
-  pinMode(4,  OUTPUT);                                //chicharron
-  pinMode(3,  OUTPUT);                               //estrobo
-  pinMode(2,  OUTPUT);                               //
+  pinMode(4,  OUTPUT);                              //chicharron
+  pinMode(3,  OUTPUT);                              //estrobo
+  pinMode(2,  OUTPUT);                              //
  
   
   digitalWrite(4, HIGH);
@@ -637,7 +637,7 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                    if (strcasestr(EEPROM_BUFFER,NUMERO_A_BORRAR)) {
                                                                                                                                       SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
                                                                                                                                         delay(50);
-                                                                                                                                                          
+                                                                                                                                          NUMERO_ENCONTRADO();                
                                                                                                                                                            
                                                                                                                                                         
                                                                                                                                                       
@@ -648,4 +648,24 @@ void BUSCAR_NUMERO_BORRAR()
 
                                                              }//*/ 
 }
-
+void NUMERO_ENCONTRADO()
+{
+  int x;  
+  
+  SIM800.print("AT+CMGS=\"+52");   //
+  delay(100);
+                                     x=0;                           //POSICION DEL ADMIN LA 0
+                                         for(int p=0;p<10;p++){ 
+                                          EEPROM_BUFFER[p]=EEPROM.read(x);
+                                                  x+=101;                    
+                                                                    }//for
+  
+  SIM800.print(EEPROM_BUFFER);   //  "\"\r"
+  delay(100);
+  SIM800.print("\"\r");   //
+  delay(1000);
+  SIM800.print("Numero borrado:");           //SMS body
+  delay(50);
+  SIM800.write(0x1A);           // sends ctrl+z end of message
+  delay(4000); 
+}
