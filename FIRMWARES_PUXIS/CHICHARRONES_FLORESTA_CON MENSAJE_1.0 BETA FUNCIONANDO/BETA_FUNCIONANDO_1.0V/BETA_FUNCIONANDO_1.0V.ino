@@ -4,7 +4,7 @@
 SoftwareSerial SIM800(4,15); // RX, TX
 
 ///////////////////////
-#define REGISTROS_MAXIMOS 3
+#define REGISTROS_MAXIMOS 10
 
  
 int    ADRR_EEPROM_OCUPADO=REGISTROS_MAXIMOS; 
@@ -494,7 +494,7 @@ void ALTA_INCORRECTA()
 
 void LIMPIA_EEPROM()
 {
-  ADRR_EEPROM_OCUPADO=3; 
+  ADRR_EEPROM_OCUPADO=REGISTROS_MAXIMOS; 
   for (int i = 0 ; i < EEPROM.length() ; i++) {
     EEPROM.write(i, 0);
                                                               }
@@ -614,21 +614,7 @@ void BUSCAR_NUMERO_BORRAR()
                                         
                                                                                                                                    if (strcasestr(EEPROM_BUFFER,LLAMADA_RING)) {
                                                                                                                                       //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
-                                                                                                                                          NUMERO_EN_PELIGRO=EEPROM_BUFFER;
-                                                                                                                                            delay(1000); 
-                                                                                                                                                SIM800.println("ATH");             //CUELGA LA LLAMDA :)
-                                                                                                                                                  delay(300);  
-                                                                                                                                                       
-                                                                                                                                                       digitalWrite(4, !digitalRead(4)); 
-                                                                                                                                                         digitalWrite(3, !digitalRead(3)); 
-                                                                                                                                                       
-                                                                                                                                                            if(digitalRead(4) == 0){
-                                                                                                                                                                     ALARMA_ACTIVADA();
-                                                                                                                                                                                                                 }
-                                                                                                                                                       
-                                                                                                                                                            else{
-                                                                                                                                                                      ALARMA_DESACTIVADA();
-                                                                                                                                                                                            }
+ 
                                                                                                                                                           
                                                                                                                                                            
                                                                                                                                                         
@@ -636,7 +622,7 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                     break;                         
                                                                                 
                                                                                                                                                                                           }
-                                                y_clip=0;                                                                                                                                           
+                                               y_clip=0;                                                                                                                                           
 
                                                              }//*/ 
 }
