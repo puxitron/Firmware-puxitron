@@ -601,3 +601,43 @@ int x;
   delay(4000);
 }
 
+void BUSCAR_NUMERO_BORRAR()
+{
+                                              for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
+                                                     y_clip+=x; 
+                                                      
+                                                                           for(int k=0;k<10;k++){ 
+                                                                                  EEPROM_BUFFER[k]=EEPROM.read(y_clip);
+                                                                                        y_clip+=101;                    
+                                                                                                  }//for
+                                        
+                                        
+                                                                                                                                   if (strcasestr(EEPROM_BUFFER,LLAMADA_RING)) {
+                                                                                                                                      //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
+                                                                                                                                          NUMERO_EN_PELIGRO=EEPROM_BUFFER;
+                                                                                                                                            delay(1000); 
+                                                                                                                                                SIM800.println("ATH");             //CUELGA LA LLAMDA :)
+                                                                                                                                                  delay(300);  
+                                                                                                                                                       
+                                                                                                                                                       digitalWrite(4, !digitalRead(4)); 
+                                                                                                                                                         digitalWrite(3, !digitalRead(3)); 
+                                                                                                                                                       
+                                                                                                                                                            if(digitalRead(4) == 0){
+                                                                                                                                                                     ALARMA_ACTIVADA();
+                                                                                                                                                                                                                 }
+                                                                                                                                                       
+                                                                                                                                                            else{
+                                                                                                                                                                      ALARMA_DESACTIVADA();
+                                                                                                                                                                                            }
+                                                                                                                                                          
+                                                                                                                                                           
+                                                                                                                                                        
+                                                                                                                                                      
+                                                                                                                                    break;                         
+                                                                                
+                                                                                                                                                                                          }
+                                                y_clip=0;                                                                                                                                           
+
+                                                             }//*/ 
+}
+
