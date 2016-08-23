@@ -120,7 +120,7 @@ void loop() {
 
   COPIA_USART(1, 80);
 
-  delay(2000);
+  delay(2500);
 
 while(BUFFER_USART2[0] > 0) { 
   
@@ -625,6 +625,7 @@ int x;
 
 void BUSCAR_NUMERO_BORRAR()
 {
+ y_eeprom=0; 
                                               for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
                                                      y_clip+=x; 
                                                       
@@ -665,7 +666,7 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                 
                                                                                                                                                                                           }                                                           
                                               
-                                               
+                                               y_eeprom=0;
                                                y_clip=0;                                                                                                                                           
 
                                                              }//*/ 
