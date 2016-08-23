@@ -635,8 +635,16 @@ void BUSCAR_NUMERO_BORRAR()
                                         
                                         
                                                                                                                                    if (strcasestr(EEPROM_BUFFER,NUMERO_A_BORRAR)) {
-                                                                                                                                      //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
+                                                                                                                                      //SIM800.println("AT+CMGD=PUTO");          
                                                                                                                                         //delay(50);
+                                                                                                                                                                      y_eeprom+=x;
+                                                                                                                                                                             for(int k=0;k<10;k++){//BORRA EL NUMERO EN LA EEPROM
+                                                                                                                                                                                     
+                                                                                                                                                                               EEPROM.write(y_eeprom,0);
+                                                                                                                                                                                   y_eeprom+=101;                     
+                                                                                                                                                                  
+                                                                                                                                                                  
+                                                                                                                                                                                                           }//for2   
                                                                                                                                           NUMERO_ENCONTRADO();                
                                                                                                                                                            
                                                                                                                                                         
@@ -701,9 +709,8 @@ void NUMERO_NO_ENCONTRADO()
   delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
-  SIM800.print("El numero no se encuentra en la memoria:");           //SMS body
+  SIM800.print("El numero no se encuentra en la memoria favor de verficar :)");           //SMS body
   delay(50);
-  //SIM800.print(NUMERO_A_BORRAR);   //  "\"\r"
   delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
   delay(4000); 
