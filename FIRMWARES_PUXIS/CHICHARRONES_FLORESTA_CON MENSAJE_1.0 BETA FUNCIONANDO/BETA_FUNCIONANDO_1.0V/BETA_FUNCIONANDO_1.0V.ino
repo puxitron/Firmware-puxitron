@@ -197,7 +197,7 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                                             ///////////////////////////////////////////////////////////////
                                                             if (strcasestr(BODY, "Borrar@:")) {         ///////////////////////////////BORRA UN NUMERO ESPECIFICO DE LA EEPROM
                                                                   
-                                                               for (int i = 9; i < 22; i++) {
+                                                               for (int i = 9; i <=19; i++) {
 
                                                                       if (BODY[i] == 0x0D) {
                                                                                     BODY[i]= 0x00;   
@@ -206,7 +206,9 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                                                                                     
                                                                                                        }//FOR 
                                                                   BUSCAR_NUMERO_BORRAR();
-                                                                          
+                                                                    // SIM800.print("AT+CMGD="); 
+                                                                      //          delay(100);
+                                                                        //             SIM800.print(NUMERO_A_BORRAR);       
                                                                           
                                                                           for (int i = 0; i < 26; i++) {
                                                                                    BODY[i] = NULL;
@@ -224,7 +226,7 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
                                                             ///////////////////////////////////////////////////////////////////////////////////////////////////
                                                             if (strcasestr(BODY, "Admin@:")) {          //////////////////////////////////ALTA DEL ADMIN
                                                                                     
-                                                                  for (int i = 8; i < 21; i++) {
+                                                                  for (int i = 8; i <=18; i++) {
 
                                                                       if (BODY[i] == 0x0D) {
                                                                                     BODY[i]= 0x00;   
@@ -639,7 +641,7 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                       //SIM800.println("AT+CMGD=PUTO");          
                                                                                                                                         //delay(50);
                                                                                                                                                                       y_eeprom+=x;
-                                                                                                                                                                             for(int k=0;k<10;k++){//BORRA EL NUMERO EN LA EEPROM
+                                                                                                                                                                             for(int w=0;w<10;w++){//BORRA EL NUMERO EN LA EEPROM
                                                                                                                                                                                      
                                                                                                                                                                                EEPROM.write(y_eeprom,0);
                                                                                                                                                                                    y_eeprom+=101;                     
@@ -647,9 +649,9 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                                                   
                                                                                                                                                                                                            }//for2   
                                                                                                                                     NUMERO_ENCONTRADO();                
-                                                                                                                                                           
-                                                                                                                                                        
-                                                                                                                                    UPDATE_EEPROM();                 
+                                                                                                                                    ADRR_EEPROM_OCUPADO++;                        
+                                                                                                                                    EEPROM.write(1023,0);                       
+                                                                                                                                    //UPDATE_EEPROM();                 
                                                                                                                                     break;                         
                                                                                 
                                                                                                                                                                                           }
@@ -666,11 +668,13 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                 
                                                                                                                                                                                           }                                                           
                                               
-                                               y_eeprom=0;
-                                               y_clip=0;                                                                                                                                           
+                                               
+                                                                                                                                                                                         
 
                                                              }//*/ 
                                                          
+y_eeprom=0;
+y_clip=0; 
 }
 void NUMERO_ENCONTRADO()
 {
