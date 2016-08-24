@@ -120,7 +120,7 @@ void loop() {
 
   COPIA_USART(1, 80);
 
-  delay(2500);
+  delay(2000);
 
 while(BUFFER_USART2[0] > 0) { 
   
@@ -627,10 +627,12 @@ int x;
 
 void BUSCAR_NUMERO_BORRAR()
 {
+ int S;
  y_eeprom=0; 
+ 
                                               for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
                                                      y_clip+=x; 
-                                                      
+                                                       S++;     
                                                                            for(int k=0;k<10;k++){ 
                                                                                   EEPROM_BUFFER[k]=EEPROM.read(y_clip);
                                                                                         y_clip+=101;                    
@@ -657,7 +659,8 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                                                                           }
 
                                                                                                                                   
-                                                                                                                                   if (x == REGISTROS_MAXIMOS) {
+                                                                                                                                   if (S == REGISTROS_MAXIMOS) {
+                                                                                                                                      S=0;
                                                                                                                                       //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
                                                                                                                                         //delay(50);
                                                                                                                                           NUMERO_NO_ENCONTRADO();               
@@ -668,13 +671,13 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                 
                                                                                                                                                                                           }                                                           
                                               
-                                               
+                                               y_clip=0; 
                                                                                                                                                                                          
 
                                                              }//*/ 
                                                          
-y_eeprom=0;
-y_clip=0; 
+//
+
 }
 void NUMERO_ENCONTRADO()
 {
