@@ -200,6 +200,12 @@ int z;
                                               z+=101;                    
                                                                     }//for
      
+                                                                            //SIM800.print("AT+CMGD="); 
+                                                                              //  delay(100);
+                                                                                //    SIM800.print(CELULAR);  
+       
+       
+       
        if (strcasestr(BODY, "Admin@:")) {                                                       ////////////////////////////////////////////////ALTA DEL ADMIN
                                                                                     
                  for (int i = 8; i <=18; i++) {
@@ -250,18 +256,21 @@ int z;
                                                             if (strcasestr(BODY, "Borrar@:")) {         ///////////////////////////////BORRA UN NUMERO ESPECIFICO DE LA EEPROM
                                                                   
                                                                for (int i = 9; i <=19; i++) {
-
+                                                                                                                      if (BODY[i] == 0x0D) {
+                                                                                                                                 BODY[i]= 0x00;   
+                                                                                                                                                }
 
                                                                              NUMERO_A_BORRAR[i - 9] = BODY[i];
                                                                                                     
                                                                                                        }//FOR 
-                                                                  BUSCAR_NUMERO_BORRAR();
+                                                                  
                                                                     // SIM800.print("AT+CMGD="); 
-                                                                      //          delay(100);
-                                                                        //             SIM800.print(NUMERO_A_BORRAR);       
-                                                                          
+                                                                            //    delay(100);
+                                                                                   //SIM800.print(NUMERO_A_BORRAR);       
+                                                                        BUSCAR_NUMERO_BORRAR(); 
+                                                                         
                                                                           for (int i = 0; i < 26; i++) {
-                                                                                   BODY[i] = NULL;
+                                                                                   BODY[i] = 0x00;
                                                                                                                   }//FOR LIMPIA BODY BUFFER
                                                                                                                       }
  
@@ -681,10 +690,10 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                                                   
                                                                                                                                                                   
                                                                                                                                                                                                            }//for2   
-                                                                                                                                    NUMERO_ENCONTRADO();                
+                                                                                                                                                   
                                                                                                                                     ADRR_EEPROM_OCUPADO++;                        
                                                                                                                                     EEPROM.write(1023,0);                       
-                                                                                                                                    //UPDATE_EEPROM();                 
+                                                                                                                                    NUMERO_ENCONTRADO();                 
                                                                                                                                     break;                         
                                                                                 
                                                                                                                                                                                           }
