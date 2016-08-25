@@ -6,7 +6,7 @@ SoftwareSerial SIM800(4,15); // RX, TX
 ///////////////////////
 #define REGISTROS_MAXIMOS 10
 
- 
+int    ADMIN_CHECK; 
 int    ADRR_EEPROM_OCUPADO=REGISTROS_MAXIMOS; 
 byte   INDEX_EEPROM;
 int    y_clip;
@@ -185,11 +185,19 @@ if (strcasestr(BUFFER_USART2, "+CLIP:")) {
 
 
 if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE 
-                         
-                          for (int i = 9; i < 19; i++) {                                                  //////////////////////////////OBTIENE EL NUMERO DEL MENSAJE
-                                      CELULAR[i - 9] = BUFFER_USART2[i];
-                                                                             }
+int z;                         
+       for (int i = 9; i < 19; i++) {                                                                     //////////////////////////////OBTIENE EL NUMERO DEL MENSAJE
+             CELULAR[i - 9] = BUFFER_USART2[i];
+                                        }
 
+                                 z=0;                           //POSICION DEL ADMIN LA 0
+                                   for(int p=0;p<10;p++){ 
+                                        EEPROM_BUFFER[p]=EEPROM.read(z);
+                                              z+=101;                    
+                                                                    }//for
+     
+     if (strcasestr(CELULAR, EEPROM_BUFFER)) {                   
+                            
                             for (int i = 47; i < 71; i++) {                                              //////////////////////////////////OBTIENE EL CUERPO DEL MENSAJE
                                         BODY[i - 47] = BUFFER_USART2[i];
                                                                   }
@@ -376,6 +384,8 @@ if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE
 
 
 
+                     }//admin check
+            
             }
 
 
@@ -627,12 +637,11 @@ int x;
 
 void BUSCAR_NUMERO_BORRAR()
 {
- int S;
  y_eeprom=0; 
  
                                               for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
                                                      y_clip+=x; 
-                                                       S++;     
+                                                       //S++;     
                                                                            for(int k=0;k<10;k++){ 
                                                                                   EEPROM_BUFFER[k]=EEPROM.read(y_clip);
                                                                                         y_clip+=101;                    
@@ -659,8 +668,8 @@ void BUSCAR_NUMERO_BORRAR()
                                                                                                                                                                                           }
 
                                                                                                                                   
-                                                                                                                                   if (S == REGISTROS_MAXIMOS) {
-                                                                                                                                      S=0;
+                                                                                                                                   if (x == REGISTROS_MAXIMOS) {
+                                                                                                                                    
                                                                                                                                       //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
                                                                                                                                         //delay(50);
                                                                                                                                           NUMERO_NO_ENCONTRADO();               
@@ -725,15 +734,4 @@ void NUMERO_NO_ENCONTRADO()
   delay(4000); 
 }
 
-void UPDATE_EEPROM()
-{
  
-  for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //SI EL SISTEMA SE APAGA EL FOR DETERMINA EL VALOR DE CUANTAS POSICIONES DE LA EEPROM ESTAN OCUPADAS (INDEX)
-                                                                                              
-    if(EEPROM.read(x) == 0){
-         ADRR_EEPROM_OCUPADO++; 
-                                                                                                                                                                     
-                                 }
-                                      }
-  EEPROM.write(1023,0);    
-}
