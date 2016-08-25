@@ -13,7 +13,7 @@ int    y_clip;
 int    y_eeprom;                                               //EEPROM
 int    y;
 char   MENSAJE[60];
-char   CELULAR[21];
+char   CELULAR[15];
 char   BODY[25];
 char   CELULAR_ADMIN[25];
 char   CELULAR_ALTA[25];
@@ -186,30 +186,72 @@ if (strcasestr(BUFFER_USART2, "+CLIP:")) {
 
 if (strcasestr(BUFFER_USART2, "+CMT:")) {//MENSAJE 
 int z;                         
-       for (int i = 9; i < 19; i++) {                                                                     //////////////////////////////OBTIENE EL NUMERO DEL MENSAJE
+       for (int i = 9; i <=18; i++) {                                                               //////////////////////////////OBTIENE EL NUMERO DEL MENSAJE
              CELULAR[i - 9] = BUFFER_USART2[i];
                                         }
 
+       for (int i = 47; i < 71; i++) {                                                         //////////////////////////////////OBTIENE EL CUERPO DEL MENSAJE
+              BODY[i - 47] = BUFFER_USART2[i];
+                                          }                          
+                                 
                                  z=0;                           //POSICION DEL ADMIN LA 0
                                    for(int p=0;p<10;p++){ 
                                         EEPROM_BUFFER[p]=EEPROM.read(z);
                                               z+=101;                    
                                                                     }//for
      
-     if (strcasestr(CELULAR, EEPROM_BUFFER)) {                   
-                            
-                            for (int i = 47; i < 71; i++) {                                              //////////////////////////////////OBTIENE EL CUERPO DEL MENSAJE
-                                        BODY[i - 47] = BUFFER_USART2[i];
-                                                                  }
+       if (strcasestr(BODY, "Admin@:")) {                                                       ////////////////////////////////////////////////ALTA DEL ADMIN
+                                                                                    
+                 for (int i = 8; i <=18; i++) {
 
-                                                            ///////////////////////////////////////////////////////////////
+                          if (BODY[i] == 0x0D) {
+                               BODY[i]= 0x00;   
+                                                 }
+                                   CELULAR_ADMIN[i - 8] = BODY[i];
+                                                                                                    
+                                                            }//FOR
+                                                                                
+                                                                                                                
+                                                                                                              
+                                                                 y=0;
+                                                                   for(int k=0;k<10;k++){
+                                                                        EEPROM.write(y,CELULAR_ADMIN[k]);
+                                                                             y+=101;                     
+                                                                                           }//for2  
+                                                                                                                
+                                                                 y=0;
+                                                                 ALTA_ADMIN();  
+                                                                         
+                                                                          
+                                                                 for (int i = 0; i < 26; i++) {
+                                                                    BODY[i] = NULL;
+                                                                                                  }//FOR LIMPIA BODY BUFFER
+                                                                                                                       
+                                                                                                     
+                                                                                                                
+                                                                                                                }//IF ADMIN
+     
+     
+                                                             ///////////////////////////////////////////////////////////////
+     if (strcasestr(BODY, "limpiar memoria")) {                                                                  ///////////////////////////////LIMPIA LA EEPROM
+           LIMPIA_EEPROM();
+                 for (int i = 0; i < 26; i++) {
+                     BODY[i] = NULL;
+                                                  }//FOR LIMPIA BODY BUFFER
+                                                       }
+
+                                                             
+     
+ if (strcasestr(EEPROM_BUFFER, CELULAR)) {                   
+                            
+
+
+                                                          
                                                             if (strcasestr(BODY, "Borrar@:")) {         ///////////////////////////////BORRA UN NUMERO ESPECIFICO DE LA EEPROM
                                                                   
                                                                for (int i = 9; i <=19; i++) {
 
-                                                                      if (BODY[i] == 0x0D) {
-                                                                                    BODY[i]= 0x00;   
-                                                                                                      }
+
                                                                              NUMERO_A_BORRAR[i - 9] = BODY[i];
                                                                                                     
                                                                                                        }//FOR 
@@ -224,47 +266,7 @@ int z;
                                                                                                                       }
  
                                                             /////////////////////////////////////////////////////////////////////////////////////////////////
-                                                            if (strcasestr(BODY, "limpiar memoria")) {     ///////////////////////////////LIMPIA LA EEPROM
-                                                                     LIMPIA_EEPROM();
-                                                                            for (int i = 0; i < 26; i++) {
-                                                                                   BODY[i] = NULL;
-                                                                                                                  }//FOR LIMPIA BODY BUFFER
-                                                                                                                      }
 
-                                                            ///////////////////////////////////////////////////////////////////////////////////////////////////
-                                                            if (strcasestr(BODY, "Admin@:")) {          //////////////////////////////////ALTA DEL ADMIN
-                                                                                    
-                                                                  for (int i = 8; i <=18; i++) {
-
-                                                                      if (BODY[i] == 0x0D) {
-                                                                                    BODY[i]= 0x00;   
-                                                                                                      }
-                                                                             CELULAR_ADMIN[i - 8] = BODY[i];
-                                                                                                    
-                                                                                                       }//FOR
-                                                                                
-                                                                                                                
-                                                                                                              
-                                                                                                           y=0;
-                                                                                                           for(int k=0;k<10;k++){
-
-                                                                                                            EEPROM.write(y,CELULAR_ADMIN[k]);
-                                                                                                                y+=101;                     
-                                                                                                                                                                  
-                                                                                                                                                                  
-                                                                                                                                       }//for2  
-                                                                                                                
-                                                                 y=0;
-                                                                 ALTA_ADMIN();  
-                                                                         
-                                                                          
-                                                                                                        for (int i = 0; i < 26; i++) {
-                                                                                                                  BODY[i] = NULL;
-                                                                                                                                            }//FOR LIMPIA BODY BUFFER
-                                                                                                                       
-                                                                                                     
-                                                                                                                
-                                                                                                                }//IF ADMIN
                                                             
                                                             if (strcasestr(BODY, "Alta@:")) {      ////////////////////////////////MECANISMO DE ALTA DE CUALQUIER NUMERO INCLUYE VALIDACION 10DIGITOS(ONLY NUMBERS)
 
@@ -386,6 +388,10 @@ int z;
 
                      }//admin check
             
+               else  {     
+                SIN_AUT();   
+                                }
+            
             }
 
 
@@ -490,11 +496,16 @@ void RESPONSE_WEB()                              // FUNCION QUE LIMPIA TODO EL S
 /////////////////////////////////////////////////////////////////////////////
 void ALTA_CORRECTA()
 {
-  //SIM900.write("AT+CMGF=1\r");           //set GSM to text mode
-  //delay(1000);
+ int x;  
   SIM800.print("AT+CMGS=\"+52");   //
   delay(100);
-  SIM800.print(CELULAR);   //  "\"\r"
+                                     x=0;                           //POSICION DEL ADMIN LA 0
+                                         for(int p=0;p<10;p++){ 
+                                          EEPROM_BUFFER[p]=EEPROM.read(x);
+                                                  x+=101;                    
+                                                                    }//for
+  
+  SIM800.print(EEPROM_BUFFER);   //  "\"\r"
   delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
@@ -512,11 +523,16 @@ void ALTA_CORRECTA()
 
 void ALTA_INCORRECTA()
 {
-  //SIM900.write("AT+CMGF=1\r");           //set GSM to text mode
-  //delay(1000);
+int x; 
   SIM800.print("AT+CMGS=\"+52");   //
   delay(100);
-  SIM800.print(CELULAR);   //  "\"\r"
+                                     x=0;                           //POSICION DEL ADMIN LA 0
+                                         for(int p=0;p<10;p++){ 
+                                          EEPROM_BUFFER[p]=EEPROM.read(x);
+                                                  x+=101;                    
+                                                                    }//for
+  
+  SIM800.print(EEPROM_BUFFER);   //  "\"\r"
   delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
@@ -547,10 +563,16 @@ void LIMPIA_EEPROM()
 
 void SIN_MEMORIA()
 {
-   
+int x;    
   SIM800.print("AT+CMGS=\"+52");   //
   delay(100);
-  SIM800.print(CELULAR);   //  "\"\r"
+                                     x=0;                           //POSICION DEL ADMIN LA 0
+                                         for(int p=0;p<10;p++){ 
+                                          EEPROM_BUFFER[p]=EEPROM.read(x);
+                                                  x+=101;                    
+                                                                    }//for
+  
+  SIM800.print(EEPROM_BUFFER);   //  "\"\r"
   delay(100);
   SIM800.print("\"\r");   //
   delay(1000);
@@ -733,5 +755,20 @@ void NUMERO_NO_ENCONTRADO()
   SIM800.write(0x1A);           // sends ctrl+z end of message
   delay(4000); 
 }
+void SIN_AUT()
+{
+   
+  SIM800.print("AT+CMGS=\"+52");   //
+  delay(100);
+  SIM800.print(CELULAR);   //  "\"\r"
+  delay(100);
+  SIM800.print("\"\r");   //
+  delay(1000);
+  SIM800.print("Sin acceso al sistema 0xFF");           //SMS body
+  delay(50);
+  SIM800.write(0x1A);           // sends ctrl+z end of message
+  delay(4000);
+}
+
 
  
