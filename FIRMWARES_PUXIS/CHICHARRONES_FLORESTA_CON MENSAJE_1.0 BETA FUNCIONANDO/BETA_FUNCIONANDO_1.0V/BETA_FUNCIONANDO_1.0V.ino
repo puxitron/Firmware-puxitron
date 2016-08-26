@@ -120,9 +120,9 @@ void loop() {
 
   COPIA_USART(1, 80);
 
-  delay(2000);
+  delay(1000);
 
-while(BUFFER_USART2[0] > 0) { 
+while(BUFFER_USART2[0] != 0) { 
   
 
 if (strcasestr(BUFFER_USART2, "+CLIP:")) {
