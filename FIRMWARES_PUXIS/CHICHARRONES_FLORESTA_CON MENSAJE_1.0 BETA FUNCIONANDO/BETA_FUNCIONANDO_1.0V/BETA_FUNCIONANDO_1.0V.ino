@@ -267,8 +267,15 @@ int z;
                                                                     // SIM800.print("AT+CMGD="); 
                                                                             //    delay(100);
                                                                                    //SIM800.print(NUMERO_A_BORRAR);       
-                                                                        BUSCAR_NUMERO_BORRAR(); 
+                                                               if (NUMERO_A_BORRAR[0] != 0) {                     //////CHECK PARA VER SI NO VIENE EN BLANCO BORRAR@:
+                                                                        BUSCAR_NUMERO_BORRAR();  
+                                                                                                                                                                
+                                                                                                                                                                }
+                                                                        
                                                                          
+                                                                         
+                                                                          
+                                                                          
                                                                           for (int i = 0; i < 26; i++) {
                                                                                    BODY[i] = 0x00;
                                                                                                                   }//FOR LIMPIA BODY BUFFER
@@ -669,14 +676,14 @@ int x;
 void BUSCAR_NUMERO_BORRAR()
 {
  y_eeprom=0; 
- 
+  y_clip=0; 
                                               for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
                                                      y_clip+=x; 
-                                                       //S++;     
+                                                         
                                                                            for(int k=0;k<10;k++){ 
                                                                                   EEPROM_BUFFER[k]=EEPROM.read(y_clip);
                                                                                         y_clip+=101;                    
-                                                                                                  }//for
+                                                                                                     }//for
                                         
                                         
                                                                                                                                    if (strcasestr(EEPROM_BUFFER,NUMERO_A_BORRAR)) {
