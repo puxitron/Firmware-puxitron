@@ -1,10 +1,10 @@
 #include <EEPROM.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial SIM800(4,15); // RX, TX
+SoftwareSerial SIM800(14,15); // RX, TX
 
 ///////////////////////
-#define REGISTROS_MAXIMOS 10
+#define REGISTROS_MAXIMOS 30
 
 int    ADMIN_CHECK; 
 int    ADRR_EEPROM_OCUPADO=REGISTROS_MAXIMOS; 
@@ -38,12 +38,7 @@ char    BUFFER_USART2[90];
 char    BUFFER_USART;
 ///////////////////////////////
 
-///////////////////////////////
-int     FLAG_RESPONSE;
-int     RESPONSE_ZZ = -1;
-int     RESPONSE;
-char    RESPONSE_BUFFER[80];
-/////////////////////////////////
+
 
 void setup() {
   
@@ -54,13 +49,13 @@ void setup() {
   UBRR0H  = 0x00;                                   //VALOR QUE SE LE CARGA AL REGISTRO HIGH 0
   UBRR0L  = 0x67;                                   //VALOR QUE SE LE CARGA AL REGISTRO LOW 0x67 QUE ES IGUAL A 103 PARA 9600 08 PARA 115200
   //////////////////////////////////////////////////////////////////////////////
-  pinMode(4,  OUTPUT);                              //chicharron
-  pinMode(3,  OUTPUT);                              //estrobo
+  pinMode(6,  OUTPUT);                              //chicharron
+  pinMode(5,  OUTPUT);                              //estrobo
   pinMode(2,  OUTPUT);                              //
  
   
-  digitalWrite(4, HIGH);
-  digitalWrite(3, HIGH);
+  digitalWrite(6, HIGH);
+  digitalWrite(5, HIGH);
   
   digitalWrite(2, LOW);
   delay(2000);
@@ -71,27 +66,34 @@ void setup() {
   SIM800.begin(9600);
 
   SIM800.println("AT");                             //
-  delay(10000);
+  delay(20000);
 
-  SIM800.println("AT+IPR=9600");                                         //
-  delay(2000);
+  //SIM800.println("AT+CBAND=ALL_BAND");                                         //
+  // delay(4000);
+
   
   SIM800.println("AT+CBAND=PCS_MODE");                                         //
   delay(4000);
+
+  //SIM800.println("AT+CBAND=EGSM_MODE");                                         //
+  //delay(8000);
+ 
+  SIM800.println("AT+IPR=9600");                                         //
+  delay(2000);
   
 
   SIM800.println("AT+CMGD=1");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
-  delay(1000);
+  delay(2000);
 
   SIM800.println("AT+CMGF=1");              //MENSAJE MODO TEXTO
-  delay(1000);
+  delay(2000);
 
   SIM800.println("AT+CNMI=2,2");          //MUESTRA EL MENSAJE COMPLETO TXT
   delay(1000);
 
 
-  //SIM800.println("AT+CLIP=1");          //MUESTRA EL MENSAJE COMPLETO TXT
-  //delay(2000);
+  SIM800.println("AT+CLIP=1");          //MUESTRA EL NUMERO DE LA LLAMDA
+  delay(2000);
 
     //SIM800.println("AT+CHLD=?");          //MUESTRA EL MENSAJE COMPLETO TXT
   //delay(2000);
@@ -117,11 +119,12 @@ void setup() {
 }
 
 void loop() {
-
+  SREG    = 0x80;  
   COPIA_USART(1, 80);
 
-  delay(1000);
-
+  delay(400);
+   SREG    = 0x00; 
+  
 while(BUFFER_USART2[0] != 0) { 
   
 
@@ -132,14 +135,14 @@ if (strcasestr(BUFFER_USART2, "+CLIP:")) {
                                                       BUFFER_USART2[i]= 0x00;   
                                                                              }
                                       
-                                      LLAMADA_RING[i - 18] = BUFFER_USART2[i];               //SACA EL NUMERO DEL IDENTIFICADOR DEL SIM (LLAMADA ENTRANTE)
+                                      LLAMADA_RING[i - 18] = BUFFER_USART2[i];                        //SACA EL NUMERO DEL IDENTIFICADOR DEL SIM (LLAMADA ENTRANTE)
                                                                              }
 
                                                                              //SIM800.print("AT+CMGD="); 
                                                                                // delay(100);
                                                                                    //  SIM800.print(LLAMADA_RING);    
                                          
-                                              for(int x=1;x<=REGISTROS_MAXIMOS;x++){             //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
+                                              for(int x=1;x<=REGISTROS_MAXIMOS;x++){                  //NUMERO DE RESGISTROS (NUMEROS DE REGISTROS)              
                                                      y_clip+=x; 
                                                       
                                                                            for(int k=0;k<10;k++){ 
@@ -149,26 +152,29 @@ if (strcasestr(BUFFER_USART2, "+CLIP:")) {
                                         
                                         
                                                                                                                                    if (strcasestr(EEPROM_BUFFER,LLAMADA_RING)) {
-                                                                                                                                      //SIM800.println("AT+CMGD=PUTO");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
+                                                                                                                                   SREG    = 0x80; 
+                                                                                                                                   //SIM800.println("AT+CMGD=PUTO");                //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
                                                                                                                                           NUMERO_EN_PELIGRO=EEPROM_BUFFER;
-                                                                                                                                            delay(1000); 
-                                                                                                                                                SIM800.println("ATH");             //CUELGA LA LLAMDA :)
-                                                                                                                                                  delay(300);  
+                                                                                                                                            //delay(1000); 
+                                                                                                                                                SIM800.println("ATH");              //CUELGA LA LLAMDA :)
+                                                                                                                                                  delay(1000);  
+                                                                                                                                                   
+                                                                                                                                                 digitalWrite(6,!digitalRead(6)); 
+                                                                                                                                                 digitalWrite(5,!digitalRead(5));     
+                                                                                                                                                 
                                                                                                                                                        
-                                                                                                                                                       digitalWrite(4, !digitalRead(4)); 
-                                                                                                                                                         digitalWrite(3, !digitalRead(3)); 
-                                                                                                                                                       
-                                                                                                                                                            if(digitalRead(4) == 0){
+                                                                                                                                                 if(digitalRead(6) == 0){
                                                                                                                                                                      ALARMA_ACTIVADA();
+                                                                                                                                                        
                                                                                                                                                                                                                  }
                                                                                                                                                        
-                                                                                                                                                            else{
-                                                                                                                                                                      ALARMA_DESACTIVADA();
+                                                                                                                                                 else{
+                                                                                                                                                                     ALARMA_DESACTIVADA();
                                                                                                                                                                                             }
                                                                                                                                                           
                                                                                                                                                            
                                                                                                                                                         
-                                                                                                                                                      
+                                                                                                                                    SREG    = 0x00;                   
                                                                                                                                     break;                         
                                                                                 
                                                                                                                                                                                           }
@@ -190,7 +196,7 @@ int z;
              CELULAR[i - 9] = BUFFER_USART2[i];
                                         }
 
-       for (int i = 47; i < 71; i++) {                                                         //////////////////////////////////OBTIENE EL CUERPO DEL MENSAJE
+       for (int i = 47; i <=70; i++) {                                                         //////////////////////////////////OBTIENE EL CUERPO DEL MENSAJE
               BODY[i - 47] = BUFFER_USART2[i];
                                           }                          
                                  
@@ -229,7 +235,7 @@ int z;
                                                                  ALTA_ADMIN();  
                                                                          
                                                                           
-                                                                 for (int i = 0; i < 26; i++) {
+                                                                 for (int i = 0;i<=24; i++) {
                                                                     BODY[i] = NULL;
                                                                                                   }//FOR LIMPIA BODY BUFFER
                                                                                                                        
@@ -241,7 +247,7 @@ int z;
                                                              ///////////////////////////////////////////////////////////////
      if (strcasestr(BODY, "limpiar memoria")) {                                                                  ///////////////////////////////LIMPIA LA EEPROM
            LIMPIA_EEPROM();
-                 for (int i = 0; i < 26; i++) {
+                 for (int i = 0;i<=24; i++) {
                      BODY[i] = NULL;
                                                   }//FOR LIMPIA BODY BUFFER
                                                        }
@@ -276,7 +282,7 @@ int z;
                                                                          
                                                                           
                                                                           
-                                                                          for (int i = 0; i < 26; i++) {
+                                                                          for (int i = 0;i<=24; i++) {
                                                                                    BODY[i] = 0x00;
                                                                                                                   }//FOR LIMPIA BODY BUFFER
                                                                                                                       }
@@ -364,7 +370,7 @@ int z;
                                                                                                                                                       else {
                                                                                                                                                        
                                                                                                                                                          if(ADRR_EEPROM_OCUPADO == 0 || EEPROM.read(1023) == '!' ){
-                                                                                                                                                            EEPROM.write(1023,33);
+                                                                                                                                                            EEPROM.write(1023,33);               //escribe el caracter ! en la eeprom
                                                                                                                                                             SIN_MEMORIA();        
                                                                                                                                                               break;   
                                                                                                                                                                       
@@ -500,15 +506,7 @@ void COPIA_USART(const int P, const int W)                      // FUNCION QUE L
 
 }
 
-void RESPONSE_WEB()                              // FUNCION QUE LIMPIA TODO EL STRING QUE GUARDA LAS VARIABLES DE RX
-{
 
-  RESPONSE = 1;
-  for (int i = 0; i < 79; i++) {
-    RESPONSE_BUFFER[i] = NULL;
-                                          }                  //CADA POSICION DEL STRING LE PONE CARACTER NULL 00
-
-            }
 /////////////////////////////////////////////////////////////////////////////
 void ALTA_CORRECTA()
 {
@@ -526,13 +524,13 @@ void ALTA_CORRECTA()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alta correcta numero:");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.print(CELULAR_ALTA_STRING +"                \r"); //SMS body
   delay(500);
   SIM800.print("Numeros disponibles:");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.print(ADRR_EEPROM_OCUPADO);           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message                          
   delay(6000);
 }
@@ -553,9 +551,9 @@ int x;
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Numero invalido");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void LIMPIA_EEPROM()
@@ -572,9 +570,9 @@ void LIMPIA_EEPROM()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Limpieza correcta");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void SIN_MEMORIA()
@@ -593,14 +591,15 @@ int x;
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("No hay suficiente espacio de almacenamiento");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void ALARMA_ACTIVADA()
 {
  int z;  
+
   SIM800.print("AT+CMGS=\"+52");   //
   delay(100);
                                        z=0;                           //POSICION DEL ADMIN LA 0
@@ -616,16 +615,17 @@ void ALARMA_ACTIVADA()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alarma activada por el numero:");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.print(NUMERO_EN_PELIGRO);           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void ALARMA_DESACTIVADA()
 {
  int z;  
+   
   SIM800.print("AT+CMGS=\"+52");   //
   delay(100);
                                        z=0;                           //POSICION DEL ADMIN LA 0
@@ -641,11 +641,11 @@ void ALARMA_DESACTIVADA()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Alarma desactivada por el numero:");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.print(NUMERO_EN_PELIGRO);           //SMS body
-  delay(50);
+  delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void ALTA_ADMIN()
@@ -658,7 +658,7 @@ int x;
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Admin activado:\r");           //SMS body
-  delay(50);
+  delay(100);
   
                                      x=0;                           //POSICION DEL ADMIN LA 0
                                          for(int p=0;p<10;p++){ 
@@ -670,7 +670,7 @@ int x;
   SIM800.print(EEPROM_BUFFER);           //SMS body
   
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 void BUSCAR_NUMERO_BORRAR()
@@ -743,11 +743,11 @@ void NUMERO_ENCONTRADO()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("Numero borrado:");           //SMS body
-  delay(50);
+  delay(100);
   SIM800.print(NUMERO_A_BORRAR);   //  "\"\r"
   delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000); 
+  delay(6000);
 }
 void NUMERO_NO_ENCONTRADO()
 {
@@ -766,10 +766,9 @@ void NUMERO_NO_ENCONTRADO()
   SIM800.print("\"\r");   //
   delay(1000);
   SIM800.print("El numero no se encuentra en la memoria favor de verficar :)");           //SMS body
-  delay(50);
   delay(100);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000); 
+  delay(6000);
 }
 void SIN_AUT()
 {
@@ -783,7 +782,7 @@ void SIN_AUT()
   SIM800.print("Sin acceso al sistema 0xFF");           //SMS body
   delay(50);
   SIM800.write(0x1A);           // sends ctrl+z end of message
-  delay(4000);
+  delay(6000);
 }
 
 
