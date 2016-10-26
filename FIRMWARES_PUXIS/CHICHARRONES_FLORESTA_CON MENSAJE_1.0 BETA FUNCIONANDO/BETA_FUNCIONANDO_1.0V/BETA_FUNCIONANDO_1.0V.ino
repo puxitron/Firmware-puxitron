@@ -4,7 +4,7 @@
 SoftwareSerial SIM800(14,15); // RX, TX
 
 ///////////////////////
-#define REGISTROS_MAXIMOS 30
+#define REGISTROS_MAXIMOS 97
 
 int    ADMIN_CHECK; 
 int    ADRR_EEPROM_OCUPADO=REGISTROS_MAXIMOS; 
@@ -49,9 +49,9 @@ void setup() {
   UBRR0H  = 0x00;                                   //VALOR QUE SE LE CARGA AL REGISTRO HIGH 0
   UBRR0L  = 0x67;                                   //VALOR QUE SE LE CARGA AL REGISTRO LOW 0x67 QUE ES IGUAL A 103 PARA 9600 08 PARA 115200
   //////////////////////////////////////////////////////////////////////////////
-  pinMode(6,  OUTPUT);                              //chicharron
-  pinMode(5,  OUTPUT);                              //estrobo
-  pinMode(2,  OUTPUT);                              //
+  pinMode(6,  OUTPUT);                              //CHICHARRON
+  pinMode(5,  OUTPUT);                              //ESTROBO
+  pinMode(2,  OUTPUT);                              //RESET
  
   
   digitalWrite(6, HIGH);
@@ -66,14 +66,14 @@ void setup() {
   SIM800.begin(9600);
 
   SIM800.println("AT");                             //
-  delay(20000);
+  delay(25000);
 
   //SIM800.println("AT+CBAND=ALL_BAND");                                         //
   // delay(4000);
 
   
   SIM800.println("AT+CBAND=PCS_MODE");                                         //
-  delay(4000);
+  delay(10000);
 
   //SIM800.println("AT+CBAND=EGSM_MODE");                                         //
   //delay(8000);
@@ -85,10 +85,10 @@ void setup() {
   SIM800.println("AT+CMGD=1");          //BORRA LA MEMORIA DONDE ESTAN LOS MENSAJES
   delay(2000);
 
-  SIM800.println("AT+CMGF=1");              //MENSAJE MODO TEXTO
+  SIM800.println("AT+CMGF=1");          //MENSAJE MODO TEXTO
   delay(2000);
 
-  SIM800.println("AT+CNMI=2,2");          //MUESTRA EL MENSAJE COMPLETO TXT
+  SIM800.println("AT+CNMI=2,2");        //MUESTRA EL MENSAJE COMPLETO TXT
   delay(1000);
 
 
@@ -119,15 +119,15 @@ void setup() {
 }
 
 void loop() {
-  SREG    = 0x80;  
-  COPIA_USART(1, 80);
+ 
+SREG    = 0x80;  
+COPIA_USART(1,80);
+delay(200);
 
-  delay(400);
-   SREG    = 0x00; 
   
-while(BUFFER_USART2[0] != 0) { 
-  
-
+if(BUFFER_USART2[0] != 0) {   
+delay(200);
+SREG    = 0x00; 
 if (strcasestr(BUFFER_USART2, "+CLIP:")) {
 
                                for (int i = 18; i <=27; i++) {
@@ -401,10 +401,10 @@ int z;
 
     
     
-    if (strcasestr(BODY, "Reset")) {
-      asm volatile ( "jmp 0");
+    //if (strcasestr(BODY, "Reset")) {
+     //asm volatile ( "jmp 0");
 
-                                            }
+                                           // }
 
 
 
@@ -419,7 +419,7 @@ int z;
 
 
 
-  break;
+  //break;
 
 }
 
@@ -496,7 +496,7 @@ void COPIA_USART(const int P, const int W)                      // FUNCION QUE L
   X = 0;
   Z = -1;
 
-  for (int i = 0; i < 90; i++)
+  for (int i = 0; i <=89; i++)
   {
     BUFFER_USART2[i] = NULL; //CADA POSICION DEL STRING LE PONE CARACTER NULL 00
   }
